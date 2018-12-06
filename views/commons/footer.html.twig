@@ -1,0 +1,70 @@
+{#
+
+/* This file is part of Jeedom.
+*
+* Jeedom is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Jeedom is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* This file is part of NextDom.
+*
+* NextDom is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* NextDom is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with NextDom. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#}
+<style>
+    {% include '/commons/theme.html.twig' %}
+</style>
+<script src="/vendor/node_modules/jquery/dist/jquery.min.js"></script>
+<script>
+    var clientDatetime = new Date();
+    var clientServerDiffDatetime = ({{ date().timestamp }} * 1000) - clientDatetime.getTime();
+    var serverDatetime = {{ date().timestamp }};
+    var io = null;
+    NEXTDOM_PRODUCT_NAME='{{ PRODUCT_NAME }}';
+    NEXTDOM_AJAX_TOKEN = '{{ AJAX_TOKEN }}';
+    $.ajaxSetup({
+        type: "POST",
+        data: {
+            nextdom_token: '{{ AJAX_TOKEN }}'
+        }
+    });
+    var nextdom_langage = '{{ LANGUAGE }}';{# Corrigé la faute #}
+    var jeedom_langage = '{{ LANGUAGE }}';{# Pour la compatibilité #}
+    {% if JS_VARS is defined %}
+    {% for jsVarName, jsVarValue in JS_VARS  %}
+    var {{ jsVarName }} = "{{ jsVarValue }}";
+    {% endfor %}
+    {% endif %}
+    {% if JS_VARS_RAW is defined %}
+    {% for jsVarName, jsVarValue in JS_VARS_RAW  %}
+    var {{ jsVarName }} = {{ jsVarValue|raw }};
+    {% endfor %}
+    {% endif %}
+</script>
+{% if JS_POOL is defined %}
+    {% for jsFile in JS_POOL %}
+        <script src="{{ jsFile }}"></script>
+    {% endfor %}
+{% endif %}

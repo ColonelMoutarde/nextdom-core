@@ -1,0 +1,87 @@
+<?php
+/* This file is part of Jeedom.
+ *
+ * Jeedom is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Jeedom is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* This file is part of NextDom Software.
+ *
+ * NextDom is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NextDom is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NextDom. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace NextDom\Managers;
+
+class ScenarioSubElementManager
+{
+    const DB_CLASS_NAME = 'scenarioSubElement';
+    const CLASS_NAME    = 'scenarioSubElement';
+
+    /**
+     * Obtain a sub-element of a scenario from its identifier
+     *
+     * @param $id
+     *
+     * @return array|mixed|null
+     *
+     * @throws \Exception
+     */
+    public static function byId($id)
+    {
+        $values = array('id' => $id);
+        $sql = 'SELECT ' . \DB::buildField(self::CLASS_NAME) . '
+                FROM ' . self::DB_CLASS_NAME . '
+                WHERE id = :id';
+        return \DB::Prepare($sql, $values, \DB::FETCH_TYPE_ROW, \PDO::FETCH_CLASS, self::CLASS_NAME);
+    }
+
+    /**
+     * Get the sub-elements of a scenario
+     *
+     * @param $scenarioElementId Identifier of the scenario element
+     * @param string $filterByType Filter a type of sub-elements
+     *
+     * @return array|mixed|null
+     *
+     * @throws \Exception
+     */
+    public static function byScenarioElementId($scenarioElementId, $filterByType = '')
+    {
+        $values = array(
+            'scenarioElement_id' => $scenarioElementId,
+        );
+        $sql = 'SELECT ' . \DB::buildField(self::CLASS_NAME) . '
+                FROM ' . self::DB_CLASS_NAME . '
+                WHERE scenarioElement_id=:scenarioElement_id ';
+        if ($filterByType != '') {
+            $values['type'] = $filterByType;
+            $sql .= ' AND type=:type ';
+            return \DB::Prepare($sql, $values, \DB::FETCH_TYPE_ROW, \PDO::FETCH_CLASS, self::CLASS_NAME);
+        } else {
+            $sql .= ' ORDER BY `order`';
+            return \DB::Prepare($sql, $values, \DB::FETCH_TYPE_ALL, \PDO::FETCH_CLASS, self::CLASS_NAME);
+        }
+    }
+
+}

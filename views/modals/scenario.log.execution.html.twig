@@ -1,0 +1,37 @@
+<div style="display: none;width : 100%" id="div_alertScenarioLog"></div>
+<legend class="form-group"><i class="fas fa-film">&nbsp;&nbsp;</i>{{ 'Scénario :'}}&nbsp;&nbsp;{{ scenarioHumanName }}</legend>
+<div class="form-group">
+    <a class="btn btn-warning" data-state="1" id="bt_scenarioLogStopStart"><i class="fas fa-pause">&nbsp;&nbsp;</i>{{ 'Pause' }}</a>
+    <a class="btn btn-danger pull-right" id="bt_scenarioLogEmpty"><i class="fas fa-trash">&nbsp;&nbsp;</i>{{ 'Vider le log' }}</a>
+    <a class="btn btn-success pull-right" id="bt_scenarioLogDownload"><i class="fas fa-cloud-download-alt">&nbsp;&nbsp;</i>{{ 'Télécharger' }}</a>
+</div>
+<div class="filter input-group form-group">
+    <div class="input-group-addon"><i class="fas fa-search"></i></div>
+    <input class="filter form-control" id="in_scenarioLogSearch" placeholder="{{'Rechercher...'}}" />
+</div>
+<pre id='pre_scenariolog' style='overflow: auto; height: calc(100% - 70px);with:90%;'></pre>
+<script>
+    nextdom.log.autoupdate({
+        log : 'scenarioLog/scenario'+scenarioLog_scenario_id+'.log',
+        display : $('#pre_scenariolog'),
+        search : $('#in_scenarioLogSearch'),
+        control : $('#bt_scenarioLogStopStart'),
+    });
+
+    $('#bt_scenarioLogEmpty').on('click', function () {
+     nextdom.scenario.emptyLog({
+        id: {{ scenarioId }},
+        error: function (error) {
+            notify("Erreur", error.message, 'error');
+        },
+        success: function () {
+            notify("Info", '{{ 'Log vidé avec succès' }}', 'success');
+            $('#pre_logScenarioDisplay').empty();
+        }
+    });
+ });
+
+    $('#bt_scenarioLogDownload').click(function() {
+        window.open('core/php/downloadFile.php?pathfile=log/scenarioLog/scenario{{ scenarioId }}.log', "_blank", null);
+    });
+</script>
